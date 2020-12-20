@@ -1,0 +1,81 @@
+function clearFieldNumber() {
+    numberEl.innerText = '0';
+}
+
+
+function deleteSymbolFromField() {
+    const textLength = numberEl.innerText.length;
+    numberEl.innerText = numberEl.innerText.substr(0, textLength - 1);
+    if (numberEl.innerText.length === 0) numberEl.innerText = '0';
+}
+
+
+function makeResult() {
+    numberEl.innerText = eval(numberEl.innerText);
+}
+
+
+function isNegativeNumber() {
+    return numberEl.innerText[0] === '-';
+}
+
+
+const buttonEls = [ ...document.querySelectorAll('.button') ];
+const numberEl = document.querySelector('.number');
+const buttonElsLength = buttonEls.length;
+
+
+for (let i = 0; i < buttonElsLength; i++) {
+    buttonEls[i].addEventListener('click', e => {
+        const currentTarget = e.currentTarget;
+        const text = currentTarget.innerText;
+        const isNumberKey = text.match(/[0-9]/);
+        if (text === '=') {
+            makeResult();
+            return;
+        }
+        if (text === 'C') {
+            clearFieldNumber();
+            return;
+        }
+        if (text === 'CE') {
+            deleteSymbolFromField();
+            return;
+        }
+        if (text === '+/-') {
+            const isNegative = isNegativeNumber();
+            if (isNegative) {
+                numberEl.innerText = numberEl.innerText.substr(1);
+            } else {
+                numberEl.innerText = '-' + numberEl.innerText;
+            }
+            return;
+        }
+        if (+numberEl.innerText === 0 && isNumberKey) {
+            numberEl.innerText = text;
+        } else {
+            numberEl.innerText += text;
+        }
+    });
+}
+
+
+document.addEventListener('keydown', e => {
+    const pressedKey = e.key;
+    const isValidKey = pressedKey.match(/[0-9%\/*\-+\(\).]/);
+    const isNumberKey = pressedKey.match(/[0-9]/);
+    const isBackSpacePressed = e.key === 'Backspace';
+    const isEnterPressed = e.key === 'Enter';
+    const isEscPressed = e.key === 'Escape';
+    const isFButtonPressed = e.key.startsWith('F');
+    if (isValidKey && !isFButtonPressed) {
+        if (+numberEl.innerText === 0 && isNumberKey) {
+            numberEl.innerText = e.key;
+        } else {
+            numberEl.innerText += e.key;
+        }
+    }
+    if (isBackSpacePressed) deleteSymbolFromField();
+    if (isEscPressed) clearFieldNumber();
+    if (isEnterPressed) makeResult();
+})

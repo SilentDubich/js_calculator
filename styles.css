@@ -1,0 +1,62 @@
+body {
+    height: 100vh;
+    padding: 30vh 0 0 0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    width: 320px;
+    margin: 0 auto;
+}
+
+.field_number {
+    margin: auto;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    width: 320px;
+    height: 60px;
+    outline: 2px solid #d2d2d2;
+    padding: 0 10px 5px 0;
+    box-sizing: border-box;
+    font-size: 24px;
+    overflow: hidden;
+}
+
+.button_row {
+    display: flex;
+    justify-content: center;
+}
+
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    padding: 10px 20px;
+    outline: 2px solid #d2d2d2;
+    width: 40px;
+    height: 25px;
+    cursor: pointer;
+}
+
+.service {
+    width: 120px;
+}
+
+.operator {
+    background: #f1f1f1;
+}
+
+.button:hover {
+    background: #e7e7e7;
+}
+
+.sub_button {
+    display: block;
+    text-align: center;
+}
+
+.sub {
+    vertical-align: super;
+}
