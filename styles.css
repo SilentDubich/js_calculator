@@ -60,3 +60,7 @@ body {
 .sub {
     vertical-align: super;
 }
+
+.pressed {
+    background: #e7e7e7;
+}
