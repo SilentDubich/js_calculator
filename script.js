@@ -11,6 +11,7 @@ function deleteSymbolFromField() {
 
 
 function makeResult() {
+	correctBrackets();
 	numberEl.innerText = eval(numberEl.innerText);
 }
 
@@ -29,12 +30,66 @@ function square() {
 function isLastSymbolIsOperator() {
 	const expressionLength = numberEl.innerText.length;
 	const lastSymbolInExpression = numberEl.innerText[expressionLength - 1];
-	return lastSymbolInExpression.match(/[*\-+\(\).]/);
+	return lastSymbolInExpression.match(/[*\-+.]/);
 }
 
 
 function isSymbolIsOperator(symbol) {
-	return symbol.match(/[*\-+\(\).]/);
+	return symbol.match(/[*\-+.]/);
+}
+
+
+function isLastSymbolIsOpenBracket() {
+	const expressionLength = numberEl.innerText.length;
+	const lastSymbolInExpression = numberEl.innerText[expressionLength - 1];
+	return lastSymbolInExpression === '(';
+}
+
+
+function isLastSymbolIsCloseBracket() {
+	const expressionLength = numberEl.innerText.length;
+	const lastSymbolInExpression = numberEl.innerText[expressionLength - 1];
+	return lastSymbolInExpression === ')';
+}
+
+
+function isValidCloseBracket() {
+	const expression = numberEl.innerText.split('');
+	const openBracketsLength = expression.filter(symbol => symbol === '(').length;
+	const closeBracketsLength = expression.filter(symbol => symbol === ')').length;
+	return openBracketsLength > closeBracketsLength;
+}
+
+
+function symbolIsValid(symbol) {
+	const isOpenBracket = symbol === '(';
+	const isLastOperator = isLastSymbolIsOperator();
+	const isLastIsOpenBracket = isLastSymbolIsOpenBracket();
+	if (isOpenBracket && !isLastOperator && !isLastIsOpenBracket) return;
+	const isOperator = isSymbolIsOperator(symbol);
+	if (isLastIsOpenBracket && isOperator) return;
+	if (isLastOperator && isOperator) return;
+	const isCloseBracket = symbol === ')';
+	if (isCloseBracket && isLastOperator) return;
+	const canIWriteCloseBracket = isValidCloseBracket();
+	if (isCloseBracket && !canIWriteCloseBracket) return;
+	const isNumberKey = symbol.match(/[0-9]/);
+	const isLastSymbolCloseBracket = isLastSymbolIsCloseBracket()
+	if (isNumberKey && isLastSymbolCloseBracket) return;
+	if (isLastIsOpenBracket && isCloseBracket) return;
+	return true;
+}
+
+
+function correctBrackets() {
+	const expression = numberEl.innerText.split('');
+	const openBracketsLength = expression.filter(symbol => symbol === '(').length;
+	const closeBracketsLength = expression.filter(symbol => symbol === ')').length;
+	if (openBracketsLength !== closeBracketsLength) {
+		const different = openBracketsLength - closeBracketsLength;
+		const brackets = ')'.repeat(different);
+		numberEl.innerText += brackets;
+	}
 }
 
 
@@ -73,8 +128,8 @@ for (let i = 0; i < buttonElsLength; i++) {
 		const currentTarget = e.currentTarget;
 		const text = currentTarget.innerText;
 		const isNumberKey = text.match(/[0-9]/);
-		const isBracket = text === '(';
-		if (isBracket && isSymbolIsOperator(text)) return;
+		const isValidSymbol = symbolIsValid(text);
+		if (!isValidSymbol) return;
 		switch (text) {
 			case '=':
 				makeResult();
@@ -97,8 +152,6 @@ for (let i = 0; i < buttonElsLength; i++) {
 				square();
 				return;
 			default:
-				const isLastSymbol = isLastSymbolIsOperator();
-				if (isBracket && !isLastSymbol) return;
 				if (+numberEl.innerText === 0 && isNumberKey) {
 					numberEl.innerText = text;
 				} else {
@@ -118,9 +171,8 @@ document.addEventListener('keydown', e => {
 	const isEscPressed = e.key === 'Escape';
 	const isFButtonPressed = e.key.startsWith('F');
 	togglePressedButtonClass('add', pressedKey, isValidKey, isFButtonPressed);
-	if (isLastSymbolIsOperator() && isSymbolIsOperator(pressedKey)) return;
-	console.log(pressedKey)
-	if ((pressedKey === '(' || pressedKey === ')') && isLastSymbolIsOperator()) return;
+	const isValidSymbol = symbolIsValid(pressedKey);
+	if (!isValidSymbol) return;
 	if (isValidKey && !isFButtonPressed) {
 		if (+numberEl.innerText === 0 && isNumberKey) {
 			numberEl.innerText = e.key;
